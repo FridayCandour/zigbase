@@ -1,10 +1,13 @@
-const logger = std.log;
+const info = std.log.info;
 const std = @import("std");
 const os = std.os;
 const fs = @import("./primitives/fs-methods.zig");
 
-pub fn main() void {
-    var a = fs.readFIle();
-    _ = &a;
-    logger.info("there's sokmething i need to tell you and it is = {s}", .{a});
+pub fn main() !void {
+    const mem = try std.heap.page_allocator.alloc(u8, 100 * 1024 * 1024);
+    defer std.heap.page_allocator.free(mem);
+    var fba = std.heap.FixedBufferAllocator.init(mem);
+    const allocator = fba.allocator();
+    const a = try fs.readFIle(allocator, "src/primitives/xtree.ts");
+    info("'{s}'", .{a});
 }
