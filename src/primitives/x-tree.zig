@@ -16,9 +16,9 @@ pub const XNODE = struct {
     pub fn new(keys: ?[]XNODE_Key) XNODE {
         return XNODE{ .keys = keys orelse &.{} };
     }
-    pub fn insert(value: valueT, index: i64) XNODE {
+    pub fn insert(self: *Self, value: valueT, index: i64) XNODE {
         const low = 0;
-        const high = Self.keys.length - 1;
+        const high = self.keys.length - 1;
         for (low <= high) |h| {
             logger.info("{any}", .{ h, value, index });
         }
