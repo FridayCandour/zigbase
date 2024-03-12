@@ -1,7 +1,10 @@
 const fs = @import("./primitives/fs-methods.zig");
 
 
-const SchemaOptions = struct {};
+const SchemaOptions = struct {
+    const Self = @This();
+    
+};
 
 const Schema = struct { 
   tableName: []const u8,
