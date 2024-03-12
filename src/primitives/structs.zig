@@ -72,7 +72,9 @@ pub const  SchemaOptions  = struct {
 
  ///Indicates the relationship
 
-pub const SchemaRelation =  struct {}; //Record<string, SchemaRelationOptions>;
+pub const SchemaRelation =  struct {
+  
+}; //Record<string, SchemaRelationOptions>;
  ///Indicates the relationship name
 
 pub const SchemaRelationOptions = struct   {
@@ -83,91 +85,27 @@ pub const SchemaRelationOptions = struct   {
   RelationType: []const u8,// "MANY" | "ONE";
 };
 
- ///Interface for schema column type mappings 
-pub const SchemaColumnOptions = struct {
-   ///Column type. Must be one of the value from the ColumnTypes class.
-  type: ColumnType;
-   ///Column type's length. For example type = "string" and length = 100
-  length?: number;
-   ///For example, 4 specifies a number of four digits.
-  width?: number;
-   ///Indicates if column's value can be set to NULL.
-  nullable?: bool,
-   ///Exabase DBMS
-   ///---
-   ///Default value.
-  default?: any;
-   ///Indicates if column's value is unique
-  unique?: bool,
-   ///Indicates with which schema this relation is connected to.
- 
-   ///the tableName of that schema
-  target?: []const u8,
-   ///Type of relation. Can be one of the value of the RelationTypes class.
-  RelationType?: "MANY" | "ONE";
-}
- ///All together
-
-// pub const ColumnType =
-//   | BooleanConstructor
-//   | DateConstructor
-//   | NumberConstructor
-//   | Date
-//   | JSON
-//   | typeof Schema
-//   | StringConstructor;
-
-// pub const columnValidationType = {
-//   type?: ColumnType;
-//   width?: number;
+//  ///Interface for schema column type mappings 
+// pub const SchemaColumnOptions = struct {
+//    ///Column type. Must be one of the value from the ColumnTypes class.
+//   type: ColumnType;
+//    ///Column type's length. For example type = "string" and length = 100
 //   length?: number;
+//    ///For example, 4 specifies a number of four digits.
+//   width?: number;
+//    ///Indicates if column's value can be set to NULL.
 //   nullable?: bool,
+//    ///Exabase DBMS
+//    ///---
+//    ///Default value.
 //   default?: any;
+//    ///Indicates if column's value is unique
 //   unique?: bool,
-// };
-
-// pub const qType =
-//   | "select"
-//   | "insert"
-//   | "delete"
-//   | "update"
-//   | "search"
-//   | "take"
-//   | "unique"
-//   | "skip"
-//   | "order"
-//   | "reference"
-//   | "count"
-//   | "populate";
-
-// pub const QueryType = Partial<Record<qType, any>>;
-
-// pub const Msg = { _id: string };
-// pub const Msgs = Msg[];
-
-// export interface fTable {
-//   [x: string]: { [x: string]: string[] | string };
+//    ///Indicates with which schema this relation is connected to.
+ 
+//    ///the tableName of that schema
+//   target?: []const u8,
+//    ///Type of relation. Can be one of the value of the RelationTypes class.
+//   RelationType?: "MANY" | "ONE";
 // }
-
-// export interface iTable {
-//   [x: string]: { [x: string]: string };
-// }
-
-// pub const LOG_file_type = Record<
-//   string,
-//   { last_id: string | null; size: number }
-// >;
-//  ///Document type
-
-// pub const ExaDoc<Model> = Model & {
-//    ///Document id
-//   _id: []const u8,
-// };
-
-// pub const connectOptions = {
-//   decorate(decorations: Record<string, (ctx: any) => void>): void;
-// };
-
-// pub const Xtree_flag = "i" | "u" | "d" | "n";
-
-// pub const wTrainType = [(value: unknown) => void, Msg, Xtree_flag];
+  

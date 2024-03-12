@@ -1,5 +1,6 @@
 const fs = @import("./primitives/fs-methods.zig");
 const type_enums = @import("./primitives/type_enums.zig");
+const utils = @import("./primitives/utils.zig");
 const std = @import("std");
 
 const SchemaOptions = struct {
@@ -13,11 +14,11 @@ const Schema = struct {
     relationship: type_enums.SchemaRelation = .{},
     _unique_field: struct {} = undefined,
     _foreign_field: struct {} = .{},
-    pub fn new(options: type_enums.SchemaOptions, allocator: std.mem.Allocator) Schema {
+    pub fn new(options: type_enums.SchemaOptions) Schema {
         //? mock query
         const newSchema = Schema{
             ._trx = type_enums.Query{},
-            .tableName = options.tableName, //?.trim()?.toUpperCase(),
+            .tableName = utils.trimAndUpcase(&options.tableName), //?.trim()?.toUpperCase(),
         };
         // ? parse definitions
         if (newSchema.tableName) {
