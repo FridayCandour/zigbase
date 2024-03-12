@@ -1,4 +1,5 @@
 pub const ColumnType = enum(bool) {
+    const Self = @This();
     Boolean = false,
     Date = false,
     Number = false,
@@ -6,7 +7,4 @@ pub const ColumnType = enum(bool) {
     JSON = false,
     Schema = false,
     String = false,
-    pub fn which(self: ColumnType) bool {
-        // return self == Suit.clubs;
-    }
 };

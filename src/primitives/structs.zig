@@ -108,66 +108,66 @@ pub const SchemaColumnOptions = struct {
 }
  ///All together
 
-pub const ColumnType =
-  | BooleanConstructor
-  | DateConstructor
-  | NumberConstructor
-  | Date
-  | JSON
-  | typeof Schema
-  | StringConstructor;
+// pub const ColumnType =
+//   | BooleanConstructor
+//   | DateConstructor
+//   | NumberConstructor
+//   | Date
+//   | JSON
+//   | typeof Schema
+//   | StringConstructor;
 
-pub const columnValidationType = {
-  type?: ColumnType;
-  width?: number;
-  length?: number;
-  nullable?: bool,
-  default?: any;
-  unique?: bool,
-};
+// pub const columnValidationType = {
+//   type?: ColumnType;
+//   width?: number;
+//   length?: number;
+//   nullable?: bool,
+//   default?: any;
+//   unique?: bool,
+// };
 
-pub const qType =
-  | "select"
-  | "insert"
-  | "delete"
-  | "update"
-  | "search"
-  | "take"
-  | "unique"
-  | "skip"
-  | "order"
-  | "reference"
-  | "count"
-  | "populate";
+// pub const qType =
+//   | "select"
+//   | "insert"
+//   | "delete"
+//   | "update"
+//   | "search"
+//   | "take"
+//   | "unique"
+//   | "skip"
+//   | "order"
+//   | "reference"
+//   | "count"
+//   | "populate";
 
-pub const QueryType = Partial<Record<qType, any>>;
+// pub const QueryType = Partial<Record<qType, any>>;
 
-pub const Msg = { _id: string };
-pub const Msgs = Msg[];
+// pub const Msg = { _id: string };
+// pub const Msgs = Msg[];
 
-export interface fTable {
-  [x: string]: { [x: string]: string[] | string };
-}
+// export interface fTable {
+//   [x: string]: { [x: string]: string[] | string };
+// }
 
-export interface iTable {
-  [x: string]: { [x: string]: string };
-}
+// export interface iTable {
+//   [x: string]: { [x: string]: string };
+// }
 
-pub const LOG_file_type = Record<
-  string,
-  { last_id: string | null; size: number }
->;
- ///Document type
+// pub const LOG_file_type = Record<
+//   string,
+//   { last_id: string | null; size: number }
+// >;
+//  ///Document type
 
-pub const ExaDoc<Model> = Model & {
-   ///Document id
-  _id: []const u8,
-};
+// pub const ExaDoc<Model> = Model & {
+//    ///Document id
+//   _id: []const u8,
+// };
 
-pub const connectOptions = {
-  decorate(decorations: Record<string, (ctx: any) => void>): void;
-};
+// pub const connectOptions = {
+//   decorate(decorations: Record<string, (ctx: any) => void>): void;
+// };
 
-pub const Xtree_flag = "i" | "u" | "d" | "n";
+// pub const Xtree_flag = "i" | "u" | "d" | "n";
 
-pub const wTrainType = [(value: unknown) => void, Msg, Xtree_flag];
+// pub const wTrainType = [(value: unknown) => void, Msg, Xtree_flag];

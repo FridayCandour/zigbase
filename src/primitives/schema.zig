@@ -1,4 +1,5 @@
 const fs = @import("./primitives/fs-methods.zig");
+const type_enums = @import("./primitives/type_enums.zig");
 
 
 const SchemaOptions = struct {
@@ -36,8 +37,6 @@ pub fn new(options: SchemaOptions, allocator: std.mem.Allocator ) Schema {
       inline for (@typeInfo(@TypeOf(newSchema.columns)).Struct.fields) |field| {
   const key = field.name;
   const value = @field(x, key);
- 
- //
          //? keep a easy track of relationships
         if (value.RelationType) {
           newSchema.relationship[key] = value;
@@ -52,27 +51,19 @@ pub fn new(options: SchemaOptions, allocator: std.mem.Allocator ) Schema {
           continue;
         }
         //? adding vitual types validators for JSON, Date and likes
-
-        // ? Date
-        if (newSchema.columns[key].type === .Date) {
-          newSchema.columns[key].type = ((d: []const u8 | number | Date) =>
-            new Date(d).to[]const u8().includes("Inval") === false) as any,
-        }
-        //? JSON
-        if (newSchema.columns[key].type === JSON) {
-          newSchema.columns[key].type = ((d: []const u8) =>
-            typeof d === "[]const u8") as any,
-        }
+ 
+  
+ 
         //? validating default values
         if (newSchema.columns[key].default) {
           // ? check for type
           if (
-            typeof newSchema.columns[key].default !==
-            typeof (newSchema.columns[key].type as []const u8Constructor)()
+            .default !==
+           (value.type  )()
           ) {
             throw new ExabaseError(
               " schema property default value '",
-              newSchema.columns[key].default,
+              value.default,
               "' for ",
               key,
               " on the ",
@@ -80,7 +71,7 @@ pub fn new(options: SchemaOptions, allocator: std.mem.Allocator ) Schema {
               " tableName has a wrong type"
             ),
           }
-        }
+        
 
         //? more later
         //? let's keep a record of the unique fields we currectly have
