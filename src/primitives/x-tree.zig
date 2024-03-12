@@ -9,33 +9,19 @@ const valueT = union {
 };
 
 pub const XNODE = struct {
+    const Self = @This();
+
     keys: []XNODE_Key,
 
     pub fn new(keys: ?[]XNODE_Key) XNODE {
         return XNODE{ .keys = keys orelse &.{} };
     }
     pub fn insert(value: valueT, index: i64) XNODE {
-        const Self = @This();
         const low = 0;
         const high = Self.keys.length - 1;
         for (low <= high) |h| {
             logger.info("{any}", .{ h, value, index });
-            // const mid = @floor((low + high) / 2);
-            // const current = Self.keys[mid].value;
-            // if (current == value) {
-            //     Self.keys[mid].indexes.push(index);
-            //     return;
-            // }
-            // if (current < value) {
-            //     low = mid + 1;
-            // } else {
-            //     high = mid - 1;
-            // }
         }
-        //      Self.keys.splice(low, 0,  {
-        //     .indexes = 12,
-        //     .value = .{ .string = "Hello World" },
-        // } );
     }
 };
 
@@ -54,9 +40,7 @@ pub fn main() void {
         .indexes = 12,
         .value = .{ .string = "Hello World" },
     };
-
     var c = [_]XNODE_Key{b};
-
     const a = XNODE.new(&c);
     a.insert(&.{ .string = "lol" }, 12);
     logger.info("XNODE keys: {any}", .{a.keys});

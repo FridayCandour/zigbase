@@ -1,4 +1,4 @@
-const info = std.log.info;
+const info = std.debug.print;
 const std = @import("std");
 const os = std.os;
 const fs = @import("./primitives/fs-methods.zig");
@@ -8,6 +8,6 @@ pub fn main() !void {
     defer std.heap.page_allocator.free(mem);
     var fba = std.heap.FixedBufferAllocator.init(mem);
     const allocator = fba.allocator();
-    const a = try fs.readFIle(allocator, "src/primitives/xtree.ts");
+    const a = try fs.readFIle(allocator, "README.md");
     info("'{s}'", .{a});
 }
