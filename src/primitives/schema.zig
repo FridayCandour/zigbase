@@ -3,7 +3,7 @@ const fs = @import("./primitives/fs-methods.zig");
 
 const SchemaOptions = struct {
     const Self = @This();
-    
+
 };
 
 const Schema = struct { 
@@ -33,17 +33,28 @@ pub fn new(options: SchemaOptions, allocator: std.mem.Allocator ) Schema {
     //    newSchema.columns._id = { .type = []const u8 };
       //? setting up secondary types on initialisation
       //? Date
-      for (const key in newSchema.columns) {
+      inline for (@typeInfo(@TypeOf(newSchema.columns)).Struct.fields) |field| {
+  const key = field.name;
+  const value = @field(x, key);
+ 
+ //
+         //? keep a easy track of relationships
+        if (value.RelationType) {
+          newSchema.relationship[key] = value;
+        //   delete newSchema.columns[key];
+          continue;
+        }
+ 
         //? keep a easy track of relationships
         if (newSchema.columns[key].RelationType) {
-          newSchema.relationship[key] = newSchema.columns[key] as SchemaRelationOptions,
-          delete newSchema.columns[key],
-          continue,
+          newSchema.relationship[key] = newSchema.columns[key] ;
+        //   delete newSchema.columns[key];
+          continue;
         }
         //? adding vitual types validators for JSON, Date and likes
 
         // ? Date
-        if (newSchema.columns[key].type === Date) {
+        if (newSchema.columns[key].type === .Date) {
           newSchema.columns[key].type = ((d: []const u8 | number | Date) =>
             new Date(d).to[]const u8().includes("Inval") === false) as any,
         }
