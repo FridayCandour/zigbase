@@ -11,13 +11,14 @@ pub const ExabaseManager = struct {
         return newExabaseManager;
     }
     name: []const u8,
-    pub fn write(self: *ExabaseManager, content: []const u8) !void {
-        fs.writeFIle(self.name, content);
+    pub fn write(self: *const ExabaseManager, content: []const u8) !void {
+        try fs.writeFIle(self.name, content);
     }
     pub fn read(self: *ExabaseManager, allocator: std.mem.Allocator) !void {
         fs.readFIle(allocator, self.name);
     }
-    pub fn readAll(self: *ExabaseManager, allocator: std.mem.Allocator) !void {
-        fs.readFIle(allocator, self.name);
+    pub fn readAll(self: *const ExabaseManager, allocator: std.mem.Allocator) ![]const u8 {
+        const data = try fs.readFIle(allocator, self.name);
+        return data;
     }
 };

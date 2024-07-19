@@ -1,19 +1,19 @@
 const fs = @import("./fs-methods.zig");
 const configs = @import("./configs.zig");
-const query = @import("./query.zig");
+const Query = @import("./query.zig").Query;
 const utils = @import("./utils.zig");
-const manager = @import("./manager.zig");
+const ExabaseManager = @import("./manager.zig").ExabaseManager;
 const std = @import("std");
 
 pub const Schema = struct {
     tableName: []const u8,
     columns: []const configs.Column,
-    manager: manager.ExabaseManager,
+    manager: ExabaseManager,
     pub fn new(options: configs.SchemaOptions) Schema {
         const newSchema = Schema{
             .tableName = utils.trimAndUpcase(options.tableName),
             .columns = options.columns,
-            .manager = manager.ExabaseManager{ .name = options.tableName },
+            .manager = ExabaseManager{ .name = options.tableName },
         };
         // ? parse definitions
         if (newSchema.tableName.len != 0) {
@@ -31,7 +31,7 @@ pub const Schema = struct {
     }
     /// Exabase
     /// ---
-    pub fn newQuery(self: *Schema, allocator: std.mem.Allocator) query.Query {
-        return query.Query{ .nanager = self.manager, .allocator = allocator };
+    pub fn newQuery(self: *const Schema, allocator: std.mem.Allocator) Query {
+        return Query{ .manager = self.manager, .allocator = allocator };
     }
 };

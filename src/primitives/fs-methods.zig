@@ -3,11 +3,25 @@ const fs = std.fs;
 const info = std.debug.print;
 
 pub fn readFIle(allocator: std.mem.Allocator, path: []const u8) ![]const u8 {
-    const file = try std.fs.cwd().openFile(path, .{});
+    const file = try getFIle(path);
     return file.reader().readAllAlloc(allocator, std.math.maxInt(usize));
 }
 pub fn writeFIle(path: []const u8, content: []const u8) !void {
-    const file = try std.fs.cwd().openFile(path, .{});
+    const file = try getFIle(path);
     try file.writer().writeAll(content);
     file.close();
+}
+pub fn getFIle(path: []const u8) !std.fs.File {
+    var file = std.fs.cwd().openFile(path, .{});
+    if (file) |value| {
+        std.debug.print("={}. ", .{value});
+    } else |err| switch (err) {
+        std.fs.File.OpenError.FileNotFound => {
+            file = try std.fs.cwd().createFile(path, .{});
+        },
+        else => {
+            unreachable;
+        },
+    }
+    return file;
 }
