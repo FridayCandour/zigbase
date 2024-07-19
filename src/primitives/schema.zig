@@ -1,91 +1,37 @@
-const fs = @import("./primitives/fs-methods.zig");
-const type_enums = @import("./primitives/type_enums.zig");
-const utils = @import("./primitives/utils.zig");
+const fs = @import("./fs-methods.zig");
+const configs = @import("./configs.zig");
+const query = @import("./query.zig");
+const utils = @import("./utils.zig");
+const manager = @import("./manager.zig");
 const std = @import("std");
 
-const SchemaOptions = struct {
-    const Self = @This();
-};
-
-const Schema = struct {
+pub const Schema = struct {
     tableName: []const u8,
-    RCT: bool,
-    _trx: type_enums.Query,
-    relationship: type_enums.SchemaRelation = .{},
-    _unique_field: struct {} = undefined,
-    _foreign_field: struct {} = .{},
-    pub fn new(options: type_enums.SchemaOptions) Schema {
-        //? mock query
+    columns: []const configs.Column,
+    manager: manager.ExabaseManager,
+    pub fn new(options: configs.SchemaOptions) Schema {
         const newSchema = Schema{
-            ._trx = type_enums.Query{},
-            .tableName = utils.trimAndUpcase(&options.tableName), //?.trim()?.toUpperCase(),
+            .tableName = utils.trimAndUpcase(options.tableName),
+            .columns = options.columns,
+            .manager = manager.ExabaseManager{ .name = options.tableName },
         };
         // ? parse definitions
-        if (newSchema.tableName) {
-            newSchema._unique_field = .{};
-            newSchema.RCT = options.RCT;
-            newSchema.migrationFN = options.migrationFN;
-            newSchema.columns = options.columns orelse .{};
+        if (newSchema.tableName.len != 0) {
             //? setting up _id type on initialisation
-            //    newSchema.columns._id = { .type = []const u8 };
+            // newSchema.columns = newSchema.columns ++ &[_]configs.Column{.{ .name = "id", .type = .String, .nullable = false, .unique = true }};
             //? setting up secondary types on initialisation
             //? Date
-            inline for (@typeInfo(@TypeOf(newSchema.columns)).Struct.fields) |field| {
-                const key = field.name;
-                const value = @field(newSchema.columns, key);
-                //? keep a easy track of relationships
-                if (value.RelationType) {
-                    newSchema.relationship[key] = value;
-                    //   delete newSchema.columns[key];
-                    continue;
-                }
-
-                //? keep a easy track of relationships
-                if (newSchema.columns[key].RelationType) {
-                    newSchema.relationship[key] = newSchema.columns[key];
-                    //   delete newSchema.columns[key];
-                    continue;
-                }
-                //? adding vitual types validators for JSON, Date and likes
-
-                //? validating default values
-                if (newSchema.columns[key].default) {
-                    // ? check for type
-                    if (.default !=
-                        (value.type))
-                    {
-                        //
-                    }
-
-                    //? more later
-                    //? let's keep a record of the unique fields we currectly have
-                    if (newSchema.columns[key].unique) {
-                        newSchema._unique_field[key] = true;
-                    }
-                }
-            }
+            // inline for (@typeInfo(@TypeOf(newSchema.columns)).Struct.fields) |field| {
+            //     const key = field.name;
+            //     const value = @field(newSchema.columns, key);
+            // }
             // ? parse definitions end
         }
         return newSchema;
     }
     /// Exabase
     /// ---
-    /// querys object
-    /// @returns {Query}
-    pub fn query() void {
-        // if (._premature) return this._trx,
-        // throw new ExabaseError(
-        //   "Schema - " +
-        //     this.tableName +
-        //     " is not yet connected to an Exabase Instance"
-        // );
-    }
-
-    /// Exabase query
-    /// Get the timestamp this data was inserted into the database
-    /// @param data
-    /// @returns Date
-    pub fn getTimestamp() void {
-        // return new Date(parseInt(_id.slice(0, 8), 16) /// 1000),
+    pub fn newQuery(self: *Schema, allocator: std.mem.Allocator) query.Query {
+        return query.Query{ .nanager = self.manager, .allocator = allocator };
     }
 };

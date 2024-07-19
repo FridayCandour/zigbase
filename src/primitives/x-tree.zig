@@ -1,5 +1,5 @@
-const logger = std.log;
 const std = @import("std");
+const logger = std.log;
 
 const valueT = union {
     string: []const u8,
