@@ -13,9 +13,7 @@ pub fn writeFIle(path: []const u8, content: []const u8) !void {
 }
 pub fn getFIle(path: []const u8) !std.fs.File {
     var file = std.fs.cwd().openFile(path, .{});
-    if (file) |value| {
-        std.debug.print("={}. ", .{value});
-    } else |err| switch (err) {
+    if (file) |_| {} else |err| switch (err) {
         std.fs.File.OpenError.FileNotFound => {
             file = try std.fs.cwd().createFile(path, .{});
         },

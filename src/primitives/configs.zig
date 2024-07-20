@@ -60,4 +60,8 @@ pub const ManagerOptionType = struct {
 // pub const ExaDoc = struct {
 //     _id: []const u8,
 // };
-// pub const Xtree_flag = "i" | "u" | "d" | "n";
+pub const write_flag = enum {
+    insert,
+    update,
+    delete,
+};
