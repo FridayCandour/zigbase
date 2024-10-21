@@ -3,7 +3,6 @@
 Progress? some more of ---
 
 ```c
-
 pub fn main() !void {
 
     // ? define schema an Exabase Schema

@@ -1,3 +1,5 @@
+const std = @import("std");
+
 const schema = @import("./schema.zig");
 
 pub const ExabaseOptions = struct {
@@ -38,6 +40,8 @@ pub const SchemaOptions = struct {
     tableName: []const u8,
     ///Indicates properties and  relationship definitions for the schema
     columns: []const Column,
+    ///Allocator
+    allocator: std.mem.Allocator,
 };
 pub const ManagerOptionType = struct {
     name: []const u8,

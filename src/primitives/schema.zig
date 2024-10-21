@@ -9,9 +9,9 @@ pub const Schema = struct {
     tableName: []const u8,
     columns: []const configs.Column,
     manager: ExabaseManager,
-    pub fn new(options: configs.SchemaOptions) Schema {
+    pub fn new(options: configs.SchemaOptions) !Schema {
         const newSchema = Schema{
-            .tableName = utils.trimAndUpcase(options.tableName),
+            .tableName = try utils.trimAndUpcase(options.allocator, options.tableName),
             .columns = options.columns,
             .manager = ExabaseManager{ .name = options.tableName },
         };

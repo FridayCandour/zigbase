@@ -18,18 +18,19 @@ pub fn main() !void {
         .columns = &[_]configs.Column{
             configs.Column{
                 .name = "id",
-                .type = configs.ColumnType.Number,
+                .type = .Number,
                 .required = false,
                 .unique = true,
             },
             configs.Column{
                 .name = "type",
-                .type = configs.ColumnType.String,
+                .type = .String,
             },
         },
+        .allocator = allocator,
     };
 
-    const schema = Schema.new(options);
+    const schema = try Schema.new(options);
     const trx = schema.newQuery(allocator);
     const many = try trx.findMany();
     std.debug.print("many: {s}\n", .{many});
