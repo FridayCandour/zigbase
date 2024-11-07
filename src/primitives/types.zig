@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const schema = @import("./schema.zig");
+const schema = @import("./structs.zig");
 
 pub const ExabaseOptions = struct {
     /// Exabase DBMS
@@ -46,24 +46,6 @@ pub const SchemaOptions = struct {
 pub const ManagerOptionType = struct {
     name: []const u8,
 };
-
-// ? not used yet
-// pub const qType = enum(bool) { select = false, insert = false, delete = false, update = false, search = false, take = false, unique = false, skip = false, order = false, reference = false, count = false, populate = false };
-
-// pub const QueryType = struct {};
-// pub const Msg = struct { _id: []const u8 };
-// pub const Msgs = []Msg;
-
-// pub const fTable = struct {};
-
-// pub const iTable = struct {};
-
-// pub const LOG_file_type = struct {};
-
-// ///Document type
-// pub const ExaDoc = struct {
-//     _id: []const u8,
-// };
 pub const write_flag = enum {
     insert,
     update,

@@ -1,9 +1,28 @@
-const fs = @import("./fs-methods.zig");
-const configs = @import("./configs.zig");
-const Query = @import("./query.zig").Query;
-const utils = @import("./utils.zig");
-const ExabaseManager = @import("./manager.zig").ExabaseManager;
+const info = std.debug.print;
 const std = @import("std");
+const os = std.os;
+const fs = @import("./utils.zig");
+const utils = @import("./utils.zig");
+const configs = @import("./types.zig");
+
+pub const ExabaseManager = struct {
+    // constructor
+    pub fn new(options: configs.ManagerOptionType) ExabaseManager {
+        const newExabaseManager = ExabaseManager{ .name = options.name };
+        return newExabaseManager;
+    }
+    name: []const u8,
+    pub fn write(self: *const ExabaseManager, content: []const u8) !void {
+        try fs.writeFile(self.name, content);
+    }
+    pub fn read(self: *ExabaseManager, allocator: std.mem.Allocator) !void {
+        fs.readFile(allocator, self.name);
+    }
+    pub fn readAll(self: *const ExabaseManager, allocator: std.mem.Allocator) ![]const u8 {
+        const data = try fs.readFile(allocator, self.name);
+        return data;
+    }
+};
 
 pub const Schema = struct {
     tableName: []const u8,
@@ -28,10 +47,5 @@ pub const Schema = struct {
             // ? parse definitions end
         }
         return newSchema;
-    }
-    /// Exabase
-    /// ---
-    pub fn newQuery(self: *const Schema, allocator: std.mem.Allocator) Query {
-        return Query{ .manager = self.manager, .allocator = allocator };
     }
 };
