@@ -2,29 +2,30 @@ const std = @import("std");
 const fs = std.fs;
 const info = std.debug.print;
 
-pub fn intersect(allocator: std.mem.Allocator, arrays: *std.ArrayListUnmanaged([]const u32)) ![]const u32 {
-    if (arrays.items.len == 0) return &[_]u32{};
+/// caller owns returned slice
+pub fn intersect(allocator: std.mem.Allocator, arrays: [][]const u32) ![]const u32 {
+    if (arrays.len == 0) return &[_]u32{};
     //   //? Put the smallest array in the beginning
     var i: u8 = 1;
-    for (arrays.items) |v| {
-        if (v.len < arrays.items[0].len) {
-            const tmp = arrays.items[0];
-            arrays.items[0] = v;
-            arrays.items[i] = tmp;
+    for (arrays) |v| {
+        if (v.len < arrays[0].len) {
+            const tmp = arrays[0];
+            arrays[0] = v;
+            arrays[i] = tmp;
         }
         info("{any} \n", .{v});
         i += 1;
     }
     //   //? if the smallest array is empty, return an empty array
-    if (arrays.items[0].len == 0) return &[_]u32{};
+    if (arrays[0].len == 0) return &[_]u32{};
     //   //? Create a map associating each element to its current count
     var Map: std.AutoHashMapUnmanaged(u32, u8) = .empty;
     defer Map.deinit(allocator);
-    for (arrays.items[0]) |value| {
+    for (arrays[0]) |value| {
         Map.put(allocator, value, 1) catch unreachable;
     }
     var i_2: u8 = 0;
-    for (arrays.items) |value| {
+    for (arrays) |value| {
         if (i_2 == 0) {
             i_2 = 1;
             continue;
@@ -43,13 +44,13 @@ pub fn intersect(allocator: std.mem.Allocator, arrays: *std.ArrayListUnmanaged([
     }
     //   //? Output only the elements that have been seen as many times as there are arrays
     var intersected = std.ArrayListUnmanaged(u32){};
-    for (arrays.items[0]) |e| {
+    for (arrays[0]) |e| {
         const count: u8 = Map.get(e) orelse 0;
-        if (count == arrays.items.len) {
+        if (count == arrays.len) {
             try intersected.append(allocator, count);
         }
     }
-    return intersected.items;
+    return intersected.toOwnedSlice(allocator);
 }
 
 pub fn main() !void {
@@ -57,9 +58,10 @@ pub fn main() !void {
     defer std.debug.assert(gpa.deinit() == .ok);
     const allocator = gpa.allocator();
     var array = std.ArrayListUnmanaged([]const u32){};
-    // try array.append(allocator, &[_]u32{});
+    defer array.deinit(allocator);
     try array.append(allocator, &[_]u32{ 1, 2, 3 });
     try array.append(allocator, &[_]u32{ 2, 3, 4 });
-    const intersected = intersect(allocator, &array);
+    const intersected = try intersect(allocator, array.items[0..]);
+    defer allocator.free(intersected);
     info("Intersection: {any}\n", .{intersected});
 }
