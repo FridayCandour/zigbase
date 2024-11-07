@@ -65,3 +65,8 @@ pub fn main() !void {
     defer allocator.free(intersected);
     info("Intersection: {any}\n", .{intersected});
 }
+
+// The rule is:
+// If you are appending / growing or removing / resizing, pass ArrayList pointer
+
+// If you are just reading or swapping, use a slice
