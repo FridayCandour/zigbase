@@ -13,11 +13,11 @@ const info = std.debug.print;
 
 // thomas
 pub const XNode = struct {
-    const Indexes = std.ArrayListUnmanaged(u32);
+    const Indexes = std.ArrayListUnmanaged(usize);
     const Map = std.StringHashMapUnmanaged(Indexes);
     map: Map = Map{},
 
-    pub fn create(self: *XNode, allocator: std.mem.Allocator, key: []const u8, value: u32) !void {
+    pub fn create(self: *XNode, allocator: std.mem.Allocator, key: []const u8, value: usize) !void {
         // Get or allocate a pair of pointers to the internals of the map (key + value)
         const gop = try self.map.getOrPut(allocator, key);
         // If we allocated a new slot and any further allocation fails, remember to remove the slot again
@@ -39,9 +39,9 @@ pub const XNode = struct {
         try gop.value_ptr.append(allocator, value);
     }
 
-    pub fn drop(self: *XNode, allocator: std.mem.Allocator, key: []const u8, value: u32) void {
+    pub fn drop(self: *XNode, allocator: std.mem.Allocator, key: []const u8, value: usize) void {
         const entry = self.map.getEntry(key) orelse return;
-        const idx = std.mem.indexOfScalar(u32, entry.value_ptr.items, value) orelse return;
+        const idx = std.mem.indexOfScalar(usize, entry.value_ptr.items, value) orelse return;
         _ = entry.value_ptr.swapRemove(idx);
         if (entry.value_ptr.items.len == 0) {
             allocator.free(entry.key_ptr.*);
@@ -59,7 +59,7 @@ pub const XNode = struct {
         self.map.deinit(allocator);
     }
 
-    pub fn getIndexes(self: *XNode, val: []const u8) []const u32 {
+    pub fn getIndexes(self: *const XNode, val: []const u8) []const usize {
         return if (self.map.get(val)) |list| list.items else &.{};
     }
 };
@@ -78,6 +78,7 @@ pub const XNode = struct {
 //     node.drop(allocator, "example_key", 43);
 //     node.deinit(allocator);
 // }
+
 // friday
 
 // const XNode = struct {
