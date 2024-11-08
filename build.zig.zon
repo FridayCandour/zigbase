@@ -1,0 +1,5 @@
+.@"zig-msgpack" = .{
+    // It is recommended to replace the following branch with commit id ? blablabla
+    .url = "https://github.com/zigcc/zig-msgpack/archive/main.tar.gz",
+    .hash = "bb28391e7ba0479747ca45d1d1ae6157f95fed75",
+},
