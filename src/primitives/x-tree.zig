@@ -14,13 +14,11 @@ const fs = std.fs;
 const info = std.debug.print;
 
 const XErrors = error{InvalidID};
-
 const XTree = struct {
     allocator: std.mem.Allocator,
     tree: std.StringHashMapUnmanaged(XNode),
     keys: std.ArrayListUnmanaged([]const u8),
     indexTable: std.StringHashMapUnmanaged(bool),
-
     pub fn init(allocator: std.mem.Allocator, indexTableInit: std.StringHashMapUnmanaged(bool)) XTree {
         return XTree{
             .allocator = allocator,
@@ -66,15 +64,18 @@ const XTree = struct {
             }
             return result;
         }
+        // info("{any} \n", .{node.getIndexes(entry.value_ptr.*)});
+        return &[_][]u8{};
     }
 
     pub fn count(self: *XTree, searchParams: std.StringHashMap([]const u8)) usize {
         var resultCount: usize = 0;
-        for (searchParams.entries()) |entry| {
-            if (self.indexTable.get(entry.key) != null) {
-                if (self.tree.goet(entry.key)) |node| {
-                    const indexes = node.map.get(entry.value) orelse null;
-                    if (indexes != null) resultCount += indexes.?.len;
+        var it = searchParams.iterator();
+        while (it.next()) |entry| {
+            if (self.indexTable.get(entry.key_ptr.*) != null) {
+                if (self.tree.get(entry.key_ptr.*)) |node| {
+                    const indexes = node.getIndexes(entry.value_ptr.*);
+                    resultCount += indexes.len;
                 }
             }
         }
@@ -97,25 +98,29 @@ const XTree = struct {
                     const newNode = XNode{};
                     try self.tree.put(self.allocator, entry.key_ptr.*, newNode);
                 }
-                var node = self.tree.get(entry.key_ptr.*) orelse unreachable;
+                var node = self.tree.get(entry.key_ptr.*).?;
                 try node.create(self.allocator, entry.value_ptr.*, idk.?);
             }
         }
     }
 
-    pub fn removeIndex(self: *XTree, data: std.StringHashMap([]const u8), drop: bool) void {
-        const idk = findKeyIndex(self.keys.items, data.get("_id") orelse &"");
+    pub fn removeIndex(self: *XTree, data: std.StringHashMap([]const u8), drop: bool) !void {
+        const id = data.get("_id") orelse return XErrors.InvalidID;
+        const idk = findKeyIndex(self.keys.items, id);
         if (idk == null) return;
-
-        for (data.entries()) |entry| {
-            if (self.tree.get(entry.key)) |node| {
-                node.drop(self.allocator, entry.value, idk.?);
+        //  ? remove other attributes indexes
+        var it = data.iterator();
+        while (it.next()) |entry| {
+            if (self.tree.get(entry.key_ptr.*) != null) {
+                break;
+            } else {
+                var node = self.tree.get(entry.key_ptr.*).?;
+                node.drop(self.allocator, entry.value_ptr.*, idk.?);
             }
         }
-
         if (drop) {
-            self.keys.items[idk.?] = self.keys.items[self.keys.items.len - 1];
-            self.keys.items.resize(self.keys.items.len - 1);
+            self.keys.items[idk.?] = self.keys.items[idk.? + 1];
+            try self.keys.resize(self.allocator, self.keys.items.len - 1);
         }
     }
 
@@ -173,7 +178,7 @@ pub fn main() !void {
     try searchParams.put("key1", "value1");
 
     const searchResults = try xtree.search(searchParams);
-    std.debug.print("Search results: {}\n", .{searchResults});
+    std.debug.print("Search results: {any}\n", .{searchResults});
 
     // Step 5: Count entries with "key2" = "value2"
     var countParams = std.StringHashMap([]const u8).init(allocator);
@@ -187,6 +192,6 @@ pub fn main() !void {
     try xtree.removeIndex(data1, true);
 
     // Step 7: Search again to confirm "data1" has been removed
-    const postRemoveResults = try xtree.search(searchParams, 10);
-    std.debug.print("Search results after removal: {}\n", .{postRemoveResults});
+    const postRemoveResults = try xtree.search(searchParams);
+    std.debug.print("Search results after removal: {any}\n", .{postRemoveResults});
 }
